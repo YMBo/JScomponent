@@ -1,5 +1,5 @@
 日历组件  
-  用法：     
+* [用法]    
 ****
 ```JavaScript
 datePicker.init(DOM节点);
