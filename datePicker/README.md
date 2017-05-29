@@ -1,11 +1,11 @@
-#日历组件  
-'用法：'  
+日历组件  
+  用法：     
 ****
 ```JavaScript
 datePicker.init(DOM节点);
 ```
 
-'example'
+  example    
 ****
 ```Javascript
 datePicker.init(document.getElementsByClassName('datepicker')[0]);
