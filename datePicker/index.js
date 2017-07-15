@@ -176,10 +176,10 @@
 	function getOffsetPos(obj){
 		var top=0,
 		left=0;
-		while(obj.parentNode !== null){
+		while(obj.offsetParent !== null){
 			top+=obj.offsetTop;
 			left+=obj.offsetLeft;
-			obj=obj.parentNode;
+			obj=obj.offsetParent;
 		}
 		return {
 			"top":top,
