@@ -114,11 +114,10 @@
 			}
 		}
 		if(direction ==="next"){
-			if(month!==12){
-				month++;
-			}else{
+			if(month===12 && year===(new Date()).getFullYear()){
 				return;
 			}
+			month++;
 		}
 		var html=datepicker.buildUi(year ,month);
 		if( !$wrapper ){
