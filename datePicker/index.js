@@ -162,7 +162,7 @@
 			}
 			/*获取日期*/
 			if(event.target.tagName.toLowerCase() === "td"){
-				var date = new Date(monthDate.year,monthDate.month,event.target.getAttribute('data'));
+				var date = new Date(monthDate.year,monthDate.month-1,event.target.getAttribute('data'));
 				if(flag){
 					$dom.value=format(date);
 				}
@@ -197,7 +197,7 @@
 		}
 		ret='',
 		ret+=date.getFullYear()+'-';
-		ret+=padding(date.getMonth())+'-';
+		ret+=padding(date.getMonth()+1)+'-';
 		ret+=padding(date.getDate());
 		return ret;
 	}
