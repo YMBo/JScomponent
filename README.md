@@ -15,3 +15,12 @@
 	datepicker.init(obj,flag,fn);
 </script>
 ```
+例：  
+```javascript
+<script>
+	datepicker.init(document.getElementById('inp'),false,function(data){
+		alert(data)
+	});
+</script>
+```  
+[查看](http://htmlpreview.github.io/?https://github.com/YMBo/JScomponent/blob/master/datePicker/index.html) 
