@@ -5,27 +5,13 @@
 	<title>datepicker</title>
 	<link rel="stylesheet" type="text/css" href="./style.css">
 	<script type="text/javascript" src='index.js'></script>
-	<style type="text/css">
-		.datepicker{
-			position: relative;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			padding: 5px;
-			height: 24px;
-			line-height: 24px;
-			width: 230px;
-		
-		}
-		.datepicker:focus{
-			outline: 0 none;
-			border: 1px solid #1abc9c;
-		}
-	</style>
 </head>
 <body>
-	<input type="text" class="datepicker">
-</body>
-<script type="text/javascript">
-		datePicker.init(document.getElementsByClassName('datepicker')[0]);
+	<input type="text" id="inp">
+	<script type="text/javascript">
+		datepicker.init(document.getElementById('inp'),false,function(data){
+			alert(data)
+		});
 	</script>
+</body>
 </html>

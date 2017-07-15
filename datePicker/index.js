@@ -1,70 +1,71 @@
 (function(){
-	var datePicker={};
-	/*存储返回数据*/
-	var res=[];
-	/*核心函数*/
-	var monthL;
-	datePicker.getMonthData=function( year, month ){
-
+	var datepicker={};
+	var monthDate=0;
+	var $wrapper=null;
+	datepicker.getMonthData = function(year , month){
+		var ret =[];
 		if( !year || !month){
-			var today=new Date();
-			year=today.getFullYear();
-			month=today.getMonth()+1;
+			var today = new Date();
+			year = today.getFullYear();
+			month = today.getMonth() + 1;
 		}
-		monthL=month;
-		/*获取上个月最后一天*/
-		var lastMonthDay=new Date(year,month-1,0);
-		var lastDate=lastMonthDay.getDate();
-		/*最后一天是星期几*/
-		var lastDateWeekDay=lastMonthDay.getDay();
-		if( lastDateWeekDay===0 ){lastDateWeekDay=7};
-		/*本月第一天*/
-		var currentMonth=new Date(year,month-1,1);
-		/*第一天星期*/
-		var currentFirstDay=currentMonth.getDay();
-		/*本月最后一天*/
-		var currentLastMonth=new Date(year,month,0);
-		var currentLastMonthDate=currentLastMonth.getDate();
-		/*第一行上个月天数*/
-		var vacDay=currentFirstDay-1;
+		var firstDay=new Date(year , month-1 ,1);
+		var firstDayWeekDay=firstDay.getDay();
+		year = firstDay.getFullYear();
+		month = firstDay.getMonth()+1;
 
-		/*循环本月*/
-		/*一个月可能有4周5周6周，所以循环6*/
-		/*理清楚 我们想要的数据 当前月份month  当前日期date  位置pos*/
-		for(var i=0;i<6*7;i++){
-			var showMonth=month;
-			/*当前日期在日历中位置*/
-			var showIDay=i+1-vacDay;
-			/*日期*/
-			var showDate=showIDay;
-			if( showIDay<=0 ){
-				showMonth=showMonth-1;
-				showDate=lastDate+showIDay;
-			}else if( showIDay >currentLastMonthDate){
-				showMonth=showMonth+1;
-				showDate=showIDay-currentLastMonthDate;
-			};
-			if( showMonth===0 ){
-				showMonth=12;
-			}else if( showMonth===13 ){
-				showMonth=1;
+		if(firstDayWeekDay === 0){firstDayWeekDay=7}
+		var lastDayOfLastMonth = new Date(year,month-1,0);
+		var lastDateOfLastMonth = lastDayOfLastMonth.getDate();
+		var preMonthDayCount = firstDayWeekDay -1;
+		var lastDay=new Date(year,month,0);
+		var lastDate= lastDay.getDate();
+
+		for(var i=0;i<7*6;i++){
+			var date = i+1 - preMonthDayCount;
+			var showDate = date;
+			var thisMonth =month;
+			//上一月
+			if(date <= 0){
+				thisMonth = month-1;
+				showDate=lastDateOfLastMonth +date;
+			}else if(date>lastDate){
+				/*下一月*/
+				thisMonth = month +1;
+				showDate = showDate-lastDate;
 			}
-			res.push({
-				'pos':showIDay,
-				'month':showMonth,
-				'date':showDate
+			thisMonth = thisMonth ===0 ? 12 :thisMonth===13? 1 :thisMonth;
+			ret.push({
+				month:thisMonth,
+				date:date,
+				showDate:showDate
 			})
 		}
-		return res;
-	};
 
-	/*渲染ui*/
-	datePicker.bulidUi=function(year,month){
-		var date=datePicker.getMonthData(year,month);
+		return {
+			year: year,
+			month:month,
+			days:ret
+		};
+	}
+
+	window.datepicker=datepicker;
+	datepicker.buildUi = function(year , month){
+		monthDate =datepicker.getMonthData(year,month);
+		var current=true;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth() + 1;
+		var todayDay=today.getDate();
+		if(todayYear===monthDate.year && todayMonth===monthDate.month){
+			current=true;
+		}else{
+			current=false;
+		}
 		var html='<div class="ui-datepicker-header">'+
-			'<a href="javascript:void(0)" class="ui-datepicker-btn ui-datepicker-prevbtn">&lt;</a>'+
-			'<a href="javascript:void(0)" class="ui-datepicker-btn ui-datepicker-nextbtn">&gt;</a>'+
-			'<span class="ui-datepicker-curr-month">2016-12</span>'+
+			'<span  class="ui-datepicker-btn ui-datepicker-prevbtn">&lt;</span>'+
+			'<span  class="ui-datepicker-btn ui-datepicker-nextbtn">&gt;</span>'+
+			'<span class="ui-datepicker-curr-month">'+monthDate.year+'年 '+monthDate.month+'月</span>'+
 		'</div>'+
 		'<div class="ui-datepicker-body">'+
 			'<table>'+
@@ -78,50 +79,127 @@
 						'<th>六</th>'+
 						'<th>日</th>'+
 					'</tr>'+
-				'</tdead><tbody>';
-		for(var i=0;i<date.length;i++){
-			var today=date[i].pos;
-			if( i% 7===0 ){
-				html+='<tr>'
-			}
-			html+='<td>'+date[i].date+'</td>';
-			if( i% 7 ===6 ){
-				html+='</tr>'
-			}
-		}
-		html+='</tbody></table></div>';
+				'</tdead>'+
+				'<tbody>';
+				for(var i=0;i < monthDate.days.length;i++){
+					var date =monthDate.days[i];
+					if(i%7 === 0 ){
+						html +='<tr>';
+					}
+					if(current  && todayDay===date.showDate){
+						html+='<td data='+date.date+' class="on">'+date.showDate + '</td>';
+					}else{
+						html+='<td data='+date.date+'>'+date.showDate + '</td>';
+					}
+					if(i%7 ===6){
+						html += '</tr>'
+					}
+				}
+				html+='</tbody>'+
+			'</table>'+
+		'</div>';
 		return html;
 	}
-
-	datePicker.init=function($input){
-		var html=datePicker.bulidUi();
-		var $wrap=document.createElement('div');
-		$wrap.className='ui-datepicker-wrapper';
-		$wrap.innerHTML=html;
-		document.body.appendChild($wrap);
-		var isOpen=true;
-		$input.addEventListener('click',function(event){
-			if(isOpen){
-				$wrap.classList.add('ui-datepicker-wrapper-show');
-				var left=getPos($input).left;
-				var top=getPos($input).top+$input.offsetHeight;
-				$wrap.style.left=left+'px';
-				$wrap.style.top=top+'px';
-			}else{
-				$wrap.classList.remove('ui-datepicker-wrapper-show');
-			}
-			isOpen=!isOpen;
-		},false);
-	}
-	window.datePicker=datePicker;
-	function getPos(domObj ){
-		var left=0;
-		var top=0;
-		while( domObj !==null ) {
-			left+=domObj.offsetLeft;
-			top+=domObj.offsetTop;
-			domObj=domObj.offsetParent;
+	datepicker.render=function(direction){
+		var year ,month;
+		if(monthDate){
+			year =monthDate.year;
+			month=monthDate.month;
 		}
-		return {'left':left,'top':top}
+		if(direction ==="prev"){
+			month--;
+			if(month===0){
+				month=12;
+				year--;
+			}
+		}
+		if(direction ==="next"){
+			if(month!==12){
+				month++;
+			}else{
+				return;
+			}
+		}
+		var html=datepicker.buildUi(year ,month);
+		if( !$wrapper ){
+			$wrapper=document.createElement('div');
+			$wrapper.className = 'ui-datepicker-wrapper';
+			document.body.appendChild($wrapper);
+		}
+		$wrapper.innerHTML = html;
+	}
+
+	/*
+	* 操作的dom
+	*是否将选中的值填入dom
+	*回掉函数返回日期
+	*/
+	datepicker.init= function($dom,flag,fn){
+		flag = (typeof flag=="undefined")? true : flag;
+		fn =fn|| null;
+		datepicker.render();
+		var isOpen =false;
+		$dom.onclick=function(){
+			if(isOpen){
+				$wrapper.style.display="none";
+				isOpen=false;
+			}else{
+				$wrapper.style.top=getOffsetPos($dom).top+$dom.offsetHeight+3+"px";
+				$wrapper.style.left=getOffsetPos($dom).left+"px";
+				$wrapper.style.display="block";
+				isOpen=true;
+			}
+		}
+		/*月份切换*/
+		$wrapper.onclick=function(event){
+			var event= event || window.event;
+			/*上一个月*/
+			if(dHasClass(event.target,"ui-datepicker-prevbtn")){
+				datepicker.render("prev")
+			}
+			/*下一个月*/
+			if(dHasClass(event.target,"ui-datepicker-nextbtn")){
+				datepicker.render("next")
+			}
+			/*获取日期*/
+			if(event.target.tagName.toLowerCase() === "td"){
+				var date = new Date(monthDate.year,monthDate.month,event.target.getAttribute('data'));
+				if(flag){
+					$dom.value=format(date);
+				}
+				if(fn){
+					fn(format(date))
+				}
+			}
+		}
+
+	}
+	function getOffsetPos(obj){
+		var top=0,
+		left=0;
+		while(obj.parentNode !== null){
+			top+=obj.offsetTop;
+			left+=obj.offsetLeft;
+			obj=obj.parentNode;
+		}
+		return {
+			"top":top,
+			"left":left
+		}
+	}
+	function dHasClass(obj,className){
+		var reg=new RegExp(className,"g");
+		var isHave=reg.test(obj.className);
+		return isHave;
+	}
+	function format(date){
+		var padding=function(num){
+			return num<9?('0'+num):num;
+		}
+		ret='',
+		ret+=date.getFullYear()+'-';
+		ret+=padding(date.getMonth())+'-';
+		ret+=padding(date.getDate());
+		return ret;
 	}
 })();
