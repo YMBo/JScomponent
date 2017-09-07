@@ -86,7 +86,7 @@
 					if(i%7 === 0 ){
 						html +='<tr>';
 					}
-					if(current  && todayDay===date.showDate){
+					if(current  && todayDay===date.showDate && todayMonth===date.month){
 						html+='<td data='+date.date+' class="on">'+date.showDate + '</td>';
 					}else{
 						html+='<td data='+date.date+'>'+date.showDate + '</td>';
